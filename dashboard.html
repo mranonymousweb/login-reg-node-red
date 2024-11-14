@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد کاربری</title>
+    <style>
+        .welcomeWrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .ContentWrapper {
+            text-align: center;
+            background-color: #d7d7d7;
+            padding: 95px;
+            box-shadow: 10px 10px 10px #c2c2c2,-10px 10px 10px #c2c2c2;
+            border-radius: 25px;
+        }
+        .head-content {
+            font-size: 24px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <section class="welcomeWrapper">
+        <section class="ContentWrapper">
+            <div class="head-content" id="welcomeMessage">در حال بارگذاری...</div>
+        </section>
+    </section>
+
+    <script>
+        // درخواست برای دریافت نام کاربری از session
+        fetch('/get-username')
+            .then(response => response.json())
+            .then(data => {
+                const username = data.username;
+                if (username) {
+                    document.getElementById('welcomeMessage').innerText = `خوش آمدید، ${username} عزیز!`;
+                } else {
+                    document.getElementById('welcomeMessage').innerText = 'شما وارد سیستم نشده‌اید.';
+                }
+            })
+            .catch(error => console.error('خطا در دریافت نام کاربری:', error));
+    </script>
+</body>
+</html>

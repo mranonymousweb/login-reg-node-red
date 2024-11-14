@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>خروج از سیستم</title>
+</head>
+<body>
+    <div class="logout-container">
+        <h2>آیا می‌خواهید از سیستم خارج شوید؟</h2>
+        <form id="logoutForm">
+            <button type="submit">خروج</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('logoutForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // ارسال درخواست خروج
+            fetch('/logout', {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // هدایت به صفحه ورود بعد از خروج
+                    window.location.href = '/';
+                } else {
+                    alert(data.message || 'خطا در خروج');
+                }
+            })
+            .catch(error => console.error('خطا در ارسال درخواست خروج:', error));
+        });
+    </script>
+</body>
+</html>
