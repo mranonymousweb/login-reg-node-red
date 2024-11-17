@@ -13,7 +13,7 @@ app.use(session({
 }));
 
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static('public')); // پوشه public را به عنوان فایل‌های استاتیک در دسترس قرار می‌دهد
 
 // اتصال به پایگاه داده MySQL
 const db = mysql.createConnection({
@@ -49,6 +49,7 @@ app.post('/login', (req, res) => {
 
         if (result.length > 0) {
             req.session.username = username; // ذخیره نام کاربری در نشست
+            req.session.ui_url = result[0].ui_url; // ذخیره ui_url در نشست
             res.json({ success: true, username: username });
         } else {
             res.json({ success: false, message: 'نام کاربری یا رمز عبور اشتباه است.' });
@@ -56,7 +57,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-// روت برای صفحه خروج
+// روت برای خروج
 app.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -66,46 +67,54 @@ app.post('/logout', (req, res) => {
     });
 });
 
-app.use(express.static('public')); // پوشه public را به عنوان فایل‌های استاتیک در دسترس قرار می‌دهد
-
 // روت صفحه اصلی (ورود)
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/login.html');
 });
 
-// Endpoint برای دریافت نام کاربری از session
+// روت داشبورد اختصاصی هر کاربر
+app.get('/dashboard/:username', (req, res) => {
+    const username = req.params.username;
+
+    if (!req.session.username || req.session.username !== username) {
+        return res.redirect('/'); // اگر وارد نشده بود، هدایت به صفحه ورود
+    }
+
+    // ارسال صفحه داشبورد کاربر
+    res.sendFile(__dirname + '/dashboard.html');
+});
+
+// روت برای نمایش داشبورد اختصاصی هر کاربر
+app.get('/ui/:username', (req, res) => {
+    const username = req.params.username;
+
+    // اطمینان از ورود کاربر
+    if (!req.session.username || req.session.username !== username) {
+        return res.redirect('/');  // هدایت به صفحه ورود اگر کاربر وارد نشده باشد
+    }
+
+    // دریافت آدرس `ui_url` از نشست
+    const userDashboardUrl = req.session.ui_url;
+
+    // بررسی اینکه آیا آدرس وجود دارد
+    if (!userDashboardUrl) {
+        return res.send('<h1>خطا: آدرس داشبورد برای این کاربر تعریف نشده است.</h1>');
+    }
+
+    // نمایش داشبورد داخل iframe
+    res.send(`
+        <h1>پنل اختصاصی برای ${username}</h1>
+        <iframe src="${userDashboardUrl}" style="width:100%; height:600px; border:none;"></iframe>
+    `);
+});
+
+// روت برای دریافت نام کاربر وارد شده
 app.get('/get-username', (req, res) => {
     if (req.session.username) {
         res.json({ username: req.session.username });
     } else {
         res.json({ username: null });
     }
-});
-
-// روت داشبورد هر کاربر
-app.get('/dashboard', (req, res) => {
-    if (!req.session.username) {
-        return res.redirect('/'); // اگر وارد نشده بود، هدایت به صفحه ورود
-    }
-    // ارسال نام کاربری به صفحه داشبورد
-    res.sendFile(__dirname + '/dashboard.html');
-});
-
-// روت برای پنل Node-RED اختصاصی هر کاربر
-app.get('/user-dashboard/:username', (req, res) => {
-    const username = req.params.username;
-
-    // اطمینان از ورود به سیستم
-    if (!req.session.username || req.session.username !== username) {
-        return res.redirect('/'); // اگر وارد نشده بود، هدایت به صفحه ورود
-    }
-
-    // مسیر منحصر به فرد برای هر کاربر
-    const userDashboardUrl = `http://localhost:1880/ui/${username}`;  // مسیر اختصاصی برای هر کاربر
-
-    // نمایش داشبورد داخل iframe
-    res.send(`<h1>پنل Node-RED اختصاصی برای ${username}</h1>
-              <iframe src="${userDashboardUrl}" style="width:100%; height:600px; border:none;"></iframe>`);
 });
 
 app.listen(port, () => {

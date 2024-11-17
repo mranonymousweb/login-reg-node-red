@@ -647,30 +647,32 @@ display-flex, .display-flex, .display-flex-center, .signup-content, .signin-cont
         </form>
     </div> -->
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            // ارسال داده‌ها به صورت JSON با استفاده از fetch
-            fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = `/dashboard/`;
-                } else {
-                    alert(data.message || 'نام کاربری یا رمز عبور اشتباه است.');
-                }
-            })
-            .catch(error => console.error('خطا در ارسال درخواست:', error));
-        });
-    </script>
+      document.getElementById('loginForm').addEventListener('submit', function(event) {
+          event.preventDefault();
+  
+          const username = document.getElementById('username').value;
+          const password = document.getElementById('password').value;
+  
+          // ارسال داده‌ها به صورت JSON با استفاده از fetch
+          fetch('/login', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ username, password })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  // هدایت به داشبورد اختصاصی هر کاربر
+                  window.location.href = `/dashboard/${data.username}`;
+              } else {
+                  alert(data.message || 'نام کاربری یا رمز عبور اشتباه است.');
+              }
+          })
+          .catch(error => console.error('خطا در ارسال درخواست:', error));
+      });
+  </script>
+  
 </body>
 </html>

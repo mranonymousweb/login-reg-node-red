@@ -1,0 +1,64 @@
+[
+    {
+        "id": "ab5a9edb6d0c394f",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b5ddeaac92ef5af0",
+        "type": "ui_button",
+        "z": "ab5a9edb6d0c394f",
+        "name": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "button",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 490,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6841572ed63f1092",
+        "type": "ui_dropdown",
+        "z": "ab5a9edb6d0c394f",
+        "name": "",
+        "label": "",
+        "tooltip": "",
+        "place": "Select option",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "value": "",
+                "label": ""
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 600,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    }
+]

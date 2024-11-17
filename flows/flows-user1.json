@@ -1,0 +1,31 @@
+[
+    {
+        "id": "ab5a9edb6d0c394f",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6b2b6e99b36a638e",
+        "type": "ui_template",
+        "z": "ab5a9edb6d0c394f",
+        "group": "",
+        "name": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "format": "<div ng-bind-html=\"msg.payload\">\n    <h1>hi</h1>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 240,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    }
+]
