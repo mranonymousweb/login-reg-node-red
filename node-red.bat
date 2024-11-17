@@ -1,50 +1,55 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM Initial port number
+REM Initial port
 set PORT=1880
 
 REM Directory to store data for each server
 set DATA_DIR=C:\NodeRedServers
 
-REM File to log server information
-set LOG_FILE=servers_log.txt
+REM File to log all server addresses
+set LOG_FILE=server_log.txt
 
-REM Create the main data directory if it doesn't exist
+REM Create the data directory if it does not exist
 if not exist "%DATA_DIR%" mkdir "%DATA_DIR%"
 
-REM Clear the log file before starting
-echo Starting servers... > %LOG_FILE%
+REM Clear the log file if it exists
+if exist "%LOG_FILE%" del "%LOG_FILE%"
 
 REM Loop to start 100 servers
 for /L %%i in (1,1,100) do (
-    REM Data directory for the current server
+    REM Data directory for each server
     set SERVER_DIR=%DATA_DIR%\Server%%i
     
-    REM Create the server directory if it doesn't exist
+    REM Create server directory if it does not exist
     if not exist "!SERVER_DIR!" mkdir "!SERVER_DIR!"
 
-    REM Start Node-RED server on the specified port with the unique user directory
-    start /b node-red -p !PORT! -u "!SERVER_DIR!"
+    REM Start Node-RED server
+    start cmd /k node-red -p !PORT! -u "!SERVER_DIR!"
+
+    REM Log the server address
+    echo Server %%i running at http://localhost:!PORT! >> "%LOG_FILE%"
     
-    REM Log server address and port
-    echo Server %%i running at http://localhost:!PORT! >> %LOG_FILE%
-    
-    REM Increment the port number for the next server
+    REM Increment the port for the next server
     set /a PORT=PORT+1
 )
 
-REM Display log file content
-type %LOG_FILE%
+REM Display the log file content
+type "%LOG_FILE%"
+echo -----------------------------------------------------
+echo Press "E" to terminate all servers.
+echo -----------------------------------------------------
 
-REM Listen for 'E' key press to terminate all Node-RED servers
-:WAIT_FOR_EXIT
-echo.
-echo Press [E] to stop all servers.
-choice /c E /n /m " "
-if errorlevel 1 goto :STOP_SERVERS
+:WAIT_INPUT
+set INPUT=
+set /p INPUT=Enter Command: 
+if /i "!INPUT!"=="E" goto TERMINATE_ALL
 
-:STOP_SERVERS
-taskkill /f /im node-red.exe > nul 2>&1
-echo All servers have been stopped.
+REM Wait for input again
+goto WAIT_INPUT
+
+:TERMINATE_ALL
+REM Close all Node-RED servers
+taskkill /f /im node.exe > nul 2>&1
+echo All servers have been terminated.
 pause
